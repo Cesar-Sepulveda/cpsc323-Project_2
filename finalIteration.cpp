@@ -303,31 +303,31 @@ bool division(int num, vector<int> lex, vector<string> input){
 
 //------------------------------------------------------------------------------
 //Print Function
-void print(int lines, string op, vector<string> input, int i){
-  cout << "Line #" << lines << ":" << endl;
-  cout << "Token: Identifier" << setw(10) << "Lexeme: " << input.at(i) << endl;
-  cout << "<Statement> -> <Assign>" << endl;
-  cout << "<Assign> -> <Identifier> = <Expression> ;" << endl;
-  cout << "Token: Operator" << setw(13) << "Lexeme: =" << endl;
-  cout << "Token: Identifier" << setw(10) << "Lexeme: " << input.at(i+2) << endl;
-  cout << "<Expression> -> <Term> <Expression Prime>" << endl;
-  cout << "<Term> -> <Factor> <Term Prime>" << endl;
-  cout << "<Factor> -> <Identifier>" << endl;
-  cout << "Token: Operator" << setw(13) << "Lexeme: " << op << endl;
-  cout << "<Term Prime> -> ε" << endl;
-  cout << "<Expression Prime> -> + <Term> <Expression Prime>" << endl;
-  cout << "Token: Identifier" << setw(10) << "Lexeme: " << input.at(i+4) << endl;
-  cout << "<Term> -> <Factor> <Term Prime>" << endl;
-  cout << "<Factor> -> <Identifier>" << endl;
-  cout << "Token: separator" << setw(12) << "Lexeme: ;" << endl;
-  cout << "<Term Prime> -> ε" << endl;
-  cout << "<Expression Prime> -> ε" << endl;
-  cout << endl;
+void print(int lines, string op, vector<string> input, int i,fstream& myFile){
+  myFile << "Line #" << lines << ":" << endl;
+  myFile << "Token: Identifier" << setw(10) << "Lexeme: " << input.at(i) << endl;
+  myFile << "<Statement> -> <Assign>" << endl;
+  myFile << "<Assign> -> <Identifier> = <Expression> ;" << endl;
+  myFile << "Token: Operator" << setw(13) << "Lexeme: =" << endl;
+  myFile << "Token: Identifier" << setw(10) << "Lexeme: " << input.at(i+2) << endl;
+  myFile << "<Expression> -> <Term> <Expression Prime>" << endl;
+  myFile << "<Term> -> <Factor> <Term Prime>" << endl;
+  myFile << "<Factor> -> <Identifier>" << endl;
+  myFile << "Token: Operator" << setw(13) << "Lexeme: " << op << endl;
+  myFile << "<Term Prime> -> ε" << endl;
+  myFile << "<Expression Prime> -> + <Term> <Expression Prime>" << endl;
+  myFile << "Token: Identifier" << setw(10) << "Lexeme: " << input.at(i+4) << endl;
+  myFile << "<Term> -> <Factor> <Term Prime>" << endl;
+  myFile << "<Factor> -> <Identifier>" << endl;
+  myFile << "Token: separator" << setw(12) << "Lexeme: ;" << endl;
+  myFile << "<Term Prime> -> ε" << endl;
+  myFile << "<Expression Prime> -> ε" << endl;
+  myFile << endl;
 }
 
 //------------------------------------------------------------------------------
 //Function that checks the inputs syntax
-void identify(vector<int> lex, vector<string> input){
+void identify(vector<int> lex, vector<string> input, fstream& myFile){
   int match = 0;
   int lines = 1;
   for(int i = 0; i < lex.size(); ++i){
@@ -335,38 +335,38 @@ void identify(vector<int> lex, vector<string> input){
     if(lex.at(i) == -14 && input.at(i).compare("!") == 0){
       match = 0;
     }else if(assignment(i,lex,input)){
-      cout << "Line #" << lines << ":" <<endl;
-      cout << "Token: Identifier" << setw(10) << "Lexeme: " << input.at(i) << endl;
-      cout << "Token: Operator" << setw(13) << "Lexeme: =" << endl;
-      cout << "Token: Identifier" << setw(10) << "Lexeme: " << input.at(i+2) << endl;
-      cout << "Token: Separator" << setw(12) << "Lexeme: ;" << endl;
+      myFile << "Line #" << lines << ":" <<endl;
+      myFile << "Token: Identifier" << setw(10) << "Lexeme: " << input.at(i) << endl;
+      myFile << "Token: Operator" << setw(13) << "Lexeme: =" << endl;
+      myFile << "Token: Identifier" << setw(10) << "Lexeme: " << input.at(i+2) << endl;
+      myFile << "Token: Separator" << setw(12) << "Lexeme: ;" << endl;
       i = i+3;
       match = 1;
       ++lines;
     }else if(addition(i,lex,input)){
-      print(lines, "+", input,i);
+      print(lines, "+", input,i,myFile);
       i = i+5;
       match = 1;
       ++lines;
     }else if(subtraction(i,lex,input)){
-      print(lines, "-", input,i);
+      print(lines, "-", input,i,myFile);
       i = i+5;
       match = 1;
       ++lines;
     }else if(multiplication(i,lex,input)){
-      print(lines, "*", input,i);
+      print(lines, "*", input,i,myFile);
       i = i+5;
       match = 1;
       ++lines;
     }else if(division(i,lex,input)){
-      print(lines, "/", input,i);
+      print(lines, "/", input,i,myFile);
       i = i+5;
       match = 1;
       ++lines;
     }
     if(match == -1){
-      cout << "Line #" << lines << ":" << endl;
-      cout << "syntax error" << endl;
+      myFile << "Line #" << lines << ":" << endl;
+      myFile << "syntax error" << endl;
       lines++;
       break;
     }
@@ -407,7 +407,6 @@ int main(){
   cout << endl;
   fstream myFile;
   myFile.open(filename2);
-  //myFile << "TOKENS" << setw(20) << "Lexemes" << endl;
   for(int i = 0; i < newInput.size(); ++i){
     if(comment == 1){
       while(i < newInput.size() && newInput.at(i) != "!"){
@@ -443,7 +442,7 @@ int main(){
       }
     }
   }
+  identify(vec, newInput, myFile);
   myFile.close();
-  identify(vec, newInput);
   return 0;
 }
